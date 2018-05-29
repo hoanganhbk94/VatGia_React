@@ -11,13 +11,20 @@ import {
 import Common from "../../utils/Common";
 import Colors from "../../styles/Colors";
 import MockData from "../../network/MockData";
+import FlatListProgress from "../common/FlatListProgress";
+import LoadingProgress from "../common/LoadingProgress";
+import FlatProductItem from "./FlatProductItem";
+import {ScreenName} from "../navigator/AppNavigator";
 
 export default class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            searchText: ''
+            searchText: '',
+            refreshing: false,
+            isLoadMore: false,
+            showProgress: false,
         }
     }
 
@@ -42,8 +49,16 @@ export default class HomeScreen extends Component {
                         data={MockData.arrProducts}
                         renderItem={this._renderItem}
                         keyExtractor={(item) => item.id}
+                        ListFooterComponent={() => this.state.isLoadMore && <FlatListProgress/>}
+                        refreshing={this.state.refreshing}
+                        onRefresh={this._handleRefresh}
+                        onEndReached={this._handleLoadMore}
+                        onEndReachedThreshold={0.3}
                     />
                 </View>
+                {
+                    this.state.showProgress && <LoadingProgress/>
+                }
             </View>
         );
     }
@@ -57,7 +72,21 @@ export default class HomeScreen extends Component {
     };
 
     _renderItem = ({item}) => {
-        return <Text>{item.name}</Text>
+        return <FlatProductItem item={item} onPressItem={this._onPressItem}/>
+    };
+
+    _onPressItem = (item) => {
+        this.props.navigation.navigate(ScreenName.detailProduct);
+    };
+
+    _handleRefresh = () => {
+
+    };
+
+    _handleLoadMore = () => {
+        this.setState({
+            isLoadMore: false
+        });
     };
 
 }
