@@ -3,8 +3,14 @@ import {
     StyleSheet,
     View,
     TextInput,
-    Text
+    Text,
+    TouchableOpacity,
+    FlatList,
+    Image
 } from 'react-native';
+import Common from "../../utils/Common";
+import Colors from "../../styles/Colors";
+import MockData from "../../network/MockData";
 
 export default class HomeScreen extends Component {
 
@@ -20,44 +26,61 @@ export default class HomeScreen extends Component {
             <View style={styles.container}>
                 <View style={styles.navigationView}>
                     <TextInput style={styles.searchInput}
-                               placeholder={'Enter keyword...'}
-                               onChangeText={this.onChangeSearchInput}
+                               placeholder={'Bạn muốn tìm kiếm sản phẩm gì?'}
+                               onChangeText={this._onChangeSearchInput}
                     />
-                    <View style={styles.searchButton}>
-                        <Text>Search</Text>
-                    </View>
+                    <TouchableOpacity
+                        style={styles.searchButton}
+                        onPress={this._onPressSearchButton}
+                    >
+                        <Image source={require('../../assets/images/icn_search.png')} />
+                    </TouchableOpacity>
                 </View>
-                <View style={styles.bodyView}>
 
+                <View style={styles.bodyView}>
+                    <FlatList
+                        data={MockData.arrProducts}
+                        renderItem={this._renderItem}
+                        keyExtractor={(item) => item.id}
+                    />
                 </View>
             </View>
         );
     }
 
-    onChangeSearchInput = (text) => {
+    _onChangeSearchInput = (text) => {
         this.setState({text});
+    };
+
+    _onPressSearchButton = () => {
+        Common.log("abc");
+    };
+
+    _renderItem = ({item}) => {
+        return <Text>{item.name}</Text>
     };
 
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#ffffff',
+        flex: 1
     },
     navigationView: {
         height: 64,
-        flexDirection: 'row',
-        backgroundColor: '#aaaaaa'
+        flexDirection: 'row'
     },
     searchInput: {
         flex: 1,
-        backgroundColor: 'red'
+        backgroundColor: Colors.bgColor,
+        borderColor: 'blue',
+        borderRadius: 4
     },
     searchButton: {
-        width: 80,
+        width: 64,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: Colors.mainColor
     },
     bodyView: {
         flex: 1,
